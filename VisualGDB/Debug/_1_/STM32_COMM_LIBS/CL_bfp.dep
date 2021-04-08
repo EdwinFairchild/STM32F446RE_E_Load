@@ -1,7 +1,5 @@
-VisualGDB/Debug/_1_/STM32_COMM_LIBS/CL_bfp.o: \
- C:/Projects/STM32_COMM_LIBS/CL_bfp.c \
- C:/Projects/STM32_COMM_LIBS/CL_bfp.h \
- C:/Projects/STM32_COMM_LIBS/CL_CONFIG.h \
+VisualGDB/Debug/_1_/STM32_COMM_LIBS/CL_bfp.o: F:/STM32_COMM_LIBS/CL_bfp.c \
+ F:/STM32_COMM_LIBS/CL_bfp.h F:/STM32_COMM_LIBS/CL_CONFIG.h \
  c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdint.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h \
@@ -23,25 +21,25 @@ VisualGDB/Debug/_1_/STM32_COMM_LIBS/CL_bfp.o: \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\lock.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h \
- C:/Projects/STM32_COMM_LIBS/CL_printMsg.h \
+ F:/STM32_COMM_LIBS/CL_printMsg.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\stdio.h \
  c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdarg.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\types.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_pthreadtypes.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\types.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\stdio.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f4xx.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f446xx.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/core_cm4.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_version.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_compiler.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_gcc.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/mpu_armv7.h \
- C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f4xx.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f446xx.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/core_cm4.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_version.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_compiler.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_gcc.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/mpu_armv7.h \
+ C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/system_stm32f4xx.h
 
-C:/Projects/STM32_COMM_LIBS/CL_bfp.h:
+F:/STM32_COMM_LIBS/CL_bfp.h:
 
-C:/Projects/STM32_COMM_LIBS/CL_CONFIG.h:
+F:/STM32_COMM_LIBS/CL_CONFIG.h:
 
 c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdint.h:
 
@@ -85,7 +83,7 @@ c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\cdefs.h:
 
 c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\string.h:
 
-C:/Projects/STM32_COMM_LIBS/CL_printMsg.h:
+F:/STM32_COMM_LIBS/CL_printMsg.h:
 
 c:\sysgcc\arm-eabi\arm-none-eabi\include\stdio.h:
 
@@ -99,18 +97,18 @@ c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\types.h:
 
 c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\stdio.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f4xx.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f4xx.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f446xx.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/stm32f446xx.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/core_cm4.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/core_cm4.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_version.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_version.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_compiler.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_compiler.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_gcc.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/cmsis_gcc.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/mpu_armv7.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Core/Include/mpu_armv7.h:
 
-C:/Users/guest2111/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/system_stm32f4xx.h:
+C:/Users/amaya/AppData/Local/VisualGDB/EmbeddedBSPs/arm-eabi/com.sysprogs.arm.stm32/STM32F4xxxx/CMSIS_HAL/Device/ST/STM32F4xx/Include/system_stm32f4xx.h:

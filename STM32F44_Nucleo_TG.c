@@ -60,16 +60,8 @@ uint32_t dac_setpoint;
 // this is the voltage for every DAC tick: 3.3/4096 to make it a multiplicatioin we just take the reciprical and multiply
 #define ADC_OFFSET 1241.21 
 
-typedef enum 
-{
-	STATE_R =0,
-	STATE_I,
-	STATE_P
-}state;
 
-state new_menu_state = STATE_R;
-state old_menu_state = STATE_R;
-//-----| Prorotypes |------
+//-------------------------------| Prorotypes |-------------------------------
 void SystemClock_Config(void);
 void MX_SPI1_Init(void);
 
@@ -99,10 +91,54 @@ void cmd_setDac_handler(uint8_t num, char *values[]);
 void cmd_setCurrent_handler(uint8_t num, char *values[]);
 void cmd_getDac_handler(uint8_t num, char *values[]);
 void cmd_getAdc_handler(uint8_t num, char *values[]);
-//------------------------------------------------------------------------------
+
+
+//-------------------------------| Finite State Machine Stuff |-------------------------------
+typedef enum redrawState
+{
+	REDRAW_NO = 0,
+	REDRAW_YES
+
+}redrawState;
+
+redrawState redraw_state = REDRAW_YES;
+
+void(*redraw_state_function[3])(void); 
+
+
+typedef enum outputState
+{
+	OUTPUT_ON = 0,
+	OUTPUT_OFF
+
+}outputState;
+
+outputState output_state = OUTPUT_OFF;
+
+
+typedef enum mainState
+{
+	STATE_R = 0,
+	STATE_I,
+	STATE_P
+}mainState;
+
+
+mainState main_state = STATE_R;
 
 
 
+void(*state_function[3])(void);
+
+void state_function_R(void);
+void state_function_I(void);
+void state_function_P(void);
+
+
+//-------------------------------| Global Values |-------------------------------
+uint16_t encoder_previous_val = 0; 
+uint16_t encoder_current_val = 0;
+float current_value = 0.0;  //will be in resolution 10mA
 
 
 int main(void)
@@ -144,18 +180,20 @@ int main(void)
 //	cli.registerCommand("getadc", ' ', cmd_getAdc_handler, "Returns current ADC value");
 
 
-	
-	
-
-	
-
 	drawr_img();
 	delayMS(1000);
 
+	//define initial state
+	output_state = OUTPUT_OFF;
+	redraw_state = REDRAW_YES;
+	state_function[0] = state_function_R;
+	state_function[1] = state_function_I;
+	state_function[2] = state_function_P;
 
+	redraw_state_function[0] = drawr_top_r;
+	redraw_state_function[1] = drawr_top_i;
+	redraw_state_function[2] = drawr_top_p;
 
-
-	
 	int num = 0; 
 
 	for (;;)
@@ -165,57 +203,135 @@ int main(void)
 		
 		
 		//	LL_DAC_ConvertData12RightAligned(DAC, LL_DAC_CHANNEL_1, (TIM3->CNT & 0xFFF));
-	
-		//---------- display stufff
-		if(new_menu_state != old_menu_state)
+		//only redraw when necessary 
+		if(redraw_state)
 		{
-
-
+			(*redraw_state_function[main_state % 3])(); 
+			redraw_state = REDRAW_NO;
 		}
-
-		if(TIM3->CNT != num)
-		{
-			num = TIM3->CNT;
-			
-			
-			//clear where previous text was
-			ST7735_FillRectangle(70, 40, 64, 26, 0xFFFF);
-			//write new text000
-			ST7735_printMsg(70, 40, "%d", TIM3->CNT);		
-			uint8_t stringy[4];
-			sprintf(stringy, "%d", TIM3->CNT);
 		
-			//-----------------------------
+		(*state_function[main_state % 3])(); //call the current state 
 
-			//encoder
-			CL_printMsg("%d\n", TIM3->CNT);
 
-			//LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_5);
-			
-			//delayMS(10);
-		}
+
+		
 		
 	}
 }
-void button_interrupt(void)
+
+
+void state_function_R(void)
 {
-	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN; 
-	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
-	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC, LL_SYSCFG_EXTI_LINE13);
+	//redraw stuff
+	
 
-	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_13);
-	LL_EXTI_InitTypeDef EXTI_InitStruct = { 0 };
-	EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_13;
-	EXTI_InitStruct.LineCommand = ENABLE;
-	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
-	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
-	LL_EXTI_Init(&EXTI_InitStruct);
+	//handle encoder stuff
 
-	/**/
-	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_NO);
-	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_INPUT);
-	__NVIC_EnableIRQ(EXTI15_10_IRQn);
+	//if output is on do it else dont
 }
+void state_function_I(void)
+{
+    
+	//if encoder has incremented counter
+	encoder_current_val = TIM3->CNT;
+
+	if (encoder_previous_val != encoder_current_val)
+	{
+		encoder_previous_val = encoder_current_val;
+		if (encoder_previous_val > encoder_current_val) // when decreased in value
+		{
+			current_value -= 0.01;
+		}
+		if (encoder_previous_val < encoder_current_val) // when increased in value
+		{
+			current_value += 0.01; 
+		}
+			
+		//clear where previous text was
+		ST7735_FillRectangle(70, 40, 64, 26, 0xFFFF);
+		//write new text000
+		ST7735_printMsg(70, 40, "%.2f", current_value);// TIM3->CNT);		
+	//	uint8_t stringy[4];
+	//	sprintf(stringy, "%d", TIM3->CNT);
+		
+		//-----------------------------
+
+		//encoder
+	//	CL_printMsg("%d\n", TIM3->CNT);
+
+		//LL_GPIO_TogglePin(GPIOA, LL_GPIO_PIN_5);
+			
+		//delayMS(10);
+	}
+
+	//if output is on do it else dont
+}
+void state_function_P(void)
+{
+	
+
+
+	//if output is on do it else dont
+}
+
+void drawr_top_i(void)
+{
+	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_i);
+	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+	
+	    // Display test image 128x128 pixel by pixel
+	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
+	{
+		for (int y = 0; y < 25; y++) {
+			uint16_t color565 = top_i[y][x];
+			// fix endiness
+			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
+			ST7735_DrawPixel(x, y, color565);
+		}
+	}
+	
+	//  HAL_Delay(15000);
+	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+}
+void drawr_top_r(void)
+{
+	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_r);
+	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+	
+	    // Display test image 128x128 pixel by pixel
+	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
+	{
+		for (int y = 0; y < 25; y++) {
+			uint16_t color565 = top_r[y][x];
+			// fix endiness
+			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
+			ST7735_DrawPixel(x, y, color565);
+		}
+	}
+	
+	//  HAL_Delay(15000);
+	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+}
+void drawr_top_p(void)
+{
+	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_p);
+	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+	
+	    // Display test image 128x128 pixel by pixel
+	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
+	{
+		for (int y = 0; y < 25; y++) {
+			uint16_t color565 = top_p[y][x];
+			// fix endiness
+			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
+			ST7735_DrawPixel(x, y, color565);
+		}
+	}
+	
+	//  HAL_Delay(15000);
+	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+}
+
 
 
 void encoder_init(void)
@@ -253,21 +369,6 @@ void encoder_init(void)
 	TIM3->CR1 |= TIM_CR1_CEN;
 }
 
-void setCurrent(float  i)
-{
-	float temp = ( (R_SHUNT * i) * ADC_OFFSET ) + ERROR;
-//	temp = temp / (0.000808081) + 5;
-	
-	dac_setpoint = (uint32_t) temp; 
-}
-void setPower(float p)
-{
-  // p = v^2 / R
-	float temp = sqrt(p * R_SHUNT); // no i have a voltage
-	temp = temp / 0.000800; 
-    dac_setpoint = (uint32_t) temp; 
-}
-
 void init_led(void)
 {
 	//initled
@@ -276,6 +377,37 @@ void init_led(void)
 	LL_GPIO_SetPinOutputType(GPIOA, LL_GPIO_PIN_5, LL_GPIO_OUTPUT_PUSHPULL);
 	LL_GPIO_SetPinSpeed(GPIOA, LL_GPIO_PIN_5, LL_GPIO_SPEED_FREQ_LOW);
 }
+void button_interrupt(void)
+{
+	RCC->APB2ENR |= RCC_APB2ENR_SYSCFGEN; 
+	LL_AHB1_GRP1_EnableClock(LL_AHB1_GRP1_PERIPH_GPIOC);
+	LL_SYSCFG_SetEXTISource(LL_SYSCFG_EXTI_PORTC, LL_SYSCFG_EXTI_LINE13);
+
+	LL_GPIO_ResetOutputPin(GPIOC, LL_GPIO_PIN_13);
+	LL_EXTI_InitTypeDef EXTI_InitStruct = { 0 };
+	EXTI_InitStruct.Line_0_31 = LL_EXTI_LINE_13;
+	EXTI_InitStruct.LineCommand = ENABLE;
+	EXTI_InitStruct.Mode = LL_EXTI_MODE_IT;
+	EXTI_InitStruct.Trigger = LL_EXTI_TRIGGER_FALLING;
+	LL_EXTI_Init(&EXTI_InitStruct);
+
+	/**/
+	LL_GPIO_SetPinPull(GPIOC, LL_GPIO_PIN_13, LL_GPIO_PULL_NO);
+	LL_GPIO_SetPinMode(GPIOC, LL_GPIO_PIN_13, LL_GPIO_MODE_INPUT);
+	__NVIC_EnableIRQ(EXTI15_10_IRQn);
+}
+void EXTI15_10_IRQHandler(void)
+{
+	LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
+	EXTI->PR = 1 <<  13;
+	__NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
+	output_state = OUTPUT_OFF;
+	main_state++;
+	redraw_state = REDRAW_YES;
+}
+
+
+
 void SystemClock_Config(void)
 {
 	LL_FLASH_SetLatency(LL_FLASH_LATENCY_5);
@@ -373,16 +505,6 @@ void MX_SPI1_Init(void)
 	/* USER CODE END SPI1_Init 2 */
 
 }
-void EXTI15_10_IRQHandler(void)
-{
-	LL_EXTI_ClearFlag_0_31(LL_EXTI_LINE_13);
-	EXTI->PR = 1 <<  13;
-	__NVIC_ClearPendingIRQ(EXTI15_10_IRQn);
-	new_menu_state++;
-	
-}
-
-
 void USART2_IRQHandler(void)
 {
 //	if ((USART2->SR & USART_SR_RXNE)) //if data has arrived on the uart
@@ -584,7 +706,6 @@ void MX_DAC_Init(void)
 	
 
 }
-
 void MX_I2C1_Init(void)
 {
 
@@ -716,64 +837,7 @@ void spiSend16(uint16_t *data, uint32_t len)
 }
 
 
-void drawr_top_i(void)
-{
-	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_i);
-	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-	
-	    // Display test image 128x128 pixel by pixel
-	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
-	{
-		for (int y = 0; y < 25; y++) {
-			uint16_t color565 = top_i[y][x];
-			// fix endiness
-			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
-			ST7735_DrawPixel(x, y, color565);
-		}
-	}
-	
-	//  HAL_Delay(15000);
-	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-}
-
-void drawr_top_r(void)
-{
-	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_r);
-	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-	
-	    // Display test image 128x128 pixel by pixel
-	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
-	{
-		for (int y = 0; y < 25; y++) {
-			uint16_t color565 = top_r[y][x];
-			// fix endiness
-			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
-			ST7735_DrawPixel(x, y, color565);
-		}
-	}
-	
-	//  HAL_Delay(15000);
-	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-}
-void drawr_top_p(void)
-{
-	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)top_p);
-	//   HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-	
-	    // Display test image 128x128 pixel by pixel
-	    for(int x = 0 ; x < ST7735_WIDTH ; x++) 
-	{
-		for (int y = 0; y < 25; y++) {
-			uint16_t color565 = top_p[y][x];
-			// fix endiness
-			color565 = ((color565 & 0xFF00) >> 8) | ((color565 & 0xFF) << 8);
-			ST7735_DrawPixel(x, y, color565);
-		}
-	}
-	
-	//  HAL_Delay(15000);
-	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
-}
+//testing purpose
 void drawr_img(void)
 {
 	ST7735_DrawImage(0, 0, ST7735_WIDTH, ST7735_HEIGHT, (uint16_t*)test_img_128x160);
@@ -811,6 +875,32 @@ void drawr_img2(void)
 	
 	//  HAL_Delay(15000);
 	  //HAL_GPIO_TogglePin(GPIOC,	LED0_Pin);
+}
+
+
+void setCurrent(float  i)
+{
+/*
+Here I have to calculate the voltage that I need across the R_SHUNT
+in order to get the desired currnet. Since V= I*R , 
+I solve algebraically for V. 
+Once I have V then I have to figure out How many DAC "ticks"
+or rathewr what DAC value will give me that voltage.
+I do this by multiplying by the ADC_OFFSET value which is explained at the top of this file
+
+*/
+
+	float temp = ( (R_SHUNT * i) * ADC_OFFSET ) + ERROR;
+//	temp = temp / (0.000808081) + 5;
+	
+	dac_setpoint = (uint32_t) temp; 
+}
+void setPower(float p)
+{
+  // p = v^2 / R
+	float temp = sqrt(p * R_SHUNT); // no i have a voltage
+	temp = temp / 0.000800; 
+    dac_setpoint = (uint32_t) temp; 
 }
 void cmd_setPoint_handler(uint8_t num, char *values[])
 {

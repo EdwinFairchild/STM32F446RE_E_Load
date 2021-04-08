@@ -1,6 +1,5 @@
 VisualGDB/Debug/_1_/STM32_COMM_LIBS/CL_nrf24l01p.o: \
- C:/Projects/STM32_COMM_LIBS/CL_nrf24l01p.c \
- C:/Projects/STM32_COMM_LIBS/CL_nrf24l01p.h \
+ F:/STM32_COMM_LIBS/CL_nrf24l01p.c F:/STM32_COMM_LIBS/CL_nrf24l01p.h \
  c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdint.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\stdint.h \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\machine\_default_types.h \
@@ -10,7 +9,7 @@ VisualGDB/Debug/_1_/STM32_COMM_LIBS/CL_nrf24l01p.o: \
  c:\sysgcc\arm-eabi\arm-none-eabi\include\sys\_stdint.h \
  c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdbool.h
 
-C:/Projects/STM32_COMM_LIBS/CL_nrf24l01p.h:
+F:/STM32_COMM_LIBS/CL_nrf24l01p.h:
 
 c:\sysgcc\arm-eabi\lib\gcc\arm-none-eabi\9.3.1\include\stdint.h:
 
